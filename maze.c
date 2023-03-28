@@ -1,7 +1,16 @@
-// �̷� Ʋ ����� ����
-// �� �Ʒ� �¿츦 �����ؼ� �������� ��� ����Ȱ� �־����
-// �� ��� ������ �����غ�����
-// ���� ��� ����Ȱ� ������ ��� �׸��� ������ �������� (--- ������) �̾��� ���� �������� ����2���̻� �Ȱ��̰�ġ�� �̹����� ���� �ϳ��� ������ �ٲ۴�..
+1. 틀만들기
+2. 행 끝까지->열끝까지
+  2-0 랜덤으로 행 끝까지 벽과 길을 생성
+  2-1 upper, left, cross 변수를 만들어서 길잇기
+  2-2 마지막 길과 연결된 길이 반드시 있어야함
+  2-3 연결된 길과 그 행에 연결된 길중 랜덤으로 하나의 길을 선택하여 다음 길로 선택
+  2-4 마지막은 직전 마지막길과 연결되도록 출구를 만듬
+
+
+// 미로 틀 만들기 성공
+// 위 아래 좌우를 조사해서 이전행의 길과 연결된게 있어야함
+// 길 어떻게 만들어갈지 생각해봐야함
+// 이전 길과 연결된게 있으면 통과 그리고 그행의 연속으로 (--- 행으로) 이어진 길들과 이전행의 길들과2개이상 똑같이겹치면 이번행의 둘중 하나를 벽으로 바꾼다..
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,19 +47,19 @@ void initialze_maze(char* maze[][WIDTH + 1])
 	}
 	for (int i = 0; i <= WIDTH; i++)
 	{
-		memcpy(&maze[i][0], "��", sizeof(char*));
-		memcpy(&maze[i][HEIGHT], "��", sizeof(char*));
+		memcpy(&maze[i][0], "■", sizeof(char*));
+		memcpy(&maze[i][HEIGHT], "■", sizeof(char*));
 	}
 	for (int i = 0; i <= HEIGHT; i++)
 	{
-		memcpy(&maze[0][i], "��", sizeof(char*));
-		memcpy(&maze[WIDTH][i], "��", sizeof(char*));
+		memcpy(&maze[0][i], "■", sizeof(char*));
+		memcpy(&maze[WIDTH][i], "■", sizeof(char*));
 	}
-	//�� ���ε�..
-	memcpy(&maze[enter][0], "��", sizeof(char*));
-	memcpy(&maze[exit][HEIGHT], "��", sizeof(char*));
-	//���� ������ �ٵ��Ұ�, check_maze_row �� 1�̸� ���� ������
-	//i�� ���� ��Ÿ����.
+	//열 행인듯..
+	memcpy(&maze[enter][0], "□", sizeof(char*));
+	memcpy(&maze[exit][HEIGHT], "□", sizeof(char*));
+	//행을 끝까지 다돌았고, check_maze_row 가 1이면 다음 행으로
+	//i는 행을 나타낸다.
 	while (y < HEIGHT)
 	{
 		int last_path = exit;
@@ -66,11 +75,11 @@ void initialze_maze(char* maze[][WIDTH + 1])
 					int z = rand() % 2 + 1;
 					if (z / 2 == 0)
 					{
-						memcpy(&maze[x][y], "��", sizeof(char*));
+						memcpy(&maze[x][y], "□", sizeof(char*));
 					}
 					else
 					{
-						memcpy(&maze[x][y], "��", sizeof(char*));
+						memcpy(&maze[x][y], "■", sizeof(char*));
 					}
 				}
 				check_maze_row_number = check_maze_row(y, maze);
@@ -83,8 +92,8 @@ void initialze_maze(char* maze[][WIDTH + 1])
 	}
 }
 
-//�������� ��� ����� ���� ������ 1�� ��ȯ �ƴϸ� 0�� ��ȯ
-// ���� ��� ����Ȱ� ������ ��� �׸��� ������ �������� (--- ������) �̾��� ���� �������� ����2���̻� �Ȱ��̰�ġ�� �̹����� ���� �ϳ��� ������ �ٲ۴�..
+//이전행의 길과 연결된 길이 있으면 1을 반환 아니면 0을 반환
+// 이전 길과 연결된게 있으면 통과 그리고 그행의 연속으로 (--- 행으로) 이어진 길들과 이전행의 길들과2개이상 똑같이겹치면 이번행의 둘중 하나를 벽으로 바꾼다..
 
 
 int check_maze_row(int row, char* maze[][WIDTH + 1])
@@ -93,7 +102,7 @@ int check_maze_row(int row, char* maze[][WIDTH + 1])
 
 	for (int i = 1; i < WIDTH + 1; i++)
 	{
-		if (strcmp(maze[i][row], "��"))
+		if (strcmp(maze[i][row], "□"))
 		{
 			stack[i] = 1;
 		}
@@ -108,5 +117,5 @@ int main()
 	initialze_maze(maze);
 	print_maze(maze);
 //	memset(maze, 0, sizeof(char*));
-//��ó�� maze�� �ʱ�ȭ�ϸ� �Ǿտ� ��ĭ�� 0���� �ʱ�ȭ��
+//위처럼 maze를 초기화하면 맨앞에 한칸만 0으로 초기화됨
 }
